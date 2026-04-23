@@ -18,22 +18,38 @@ export const TasksApp = () => {
   const [inputValue, setInputValue] = useState('');
 
   const addTodo = () => {
-    console.log('Agregar tarea', inputValue);
+    if(inputValue.length === 0) return;
+    const newTodo: Todo = {
+      id: Date.now(),
+      text: inputValue.trim(),
+      completed: false
+    }
+    // setTodos([...todos, newTodo]);
+    setTodos((prev) => [...prev, newTodo]);
 
   };
 
   const toggleTodo = (id: number) => {
-    console.log('Cambiar de true a false', id);
-
+    const updatedTodos = todos.map((todo)=>{
+      if(todo.id === id){
+        return {...todo, completed: !todo.completed} 
+      }
+      return todo;
+    });
+    setTodos(updatedTodos);
   };
 
   const deleteTodo = (id: number) => {
-    console.log('Eliminar tarea', id);
+    const updatedTodos = todos.filter((todo) => todo.id !== id);
+    setTodos(updatedTodos);
 
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    console.log('Presiono enter');
+    console.log({key: e.key});
+    if ( e.key === 'Enter'){
+      addTodo();
+    }
 
   };
 
@@ -41,7 +57,7 @@ export const TasksApp = () => {
   const totalCount = todos.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-bold text-slate-800 mb-2">

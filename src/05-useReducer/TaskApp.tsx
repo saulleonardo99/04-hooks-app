@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 
 import { Plus, Trash2, Check } from 'lucide-react';
 
@@ -6,55 +6,35 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+import { getTaskInitialState, taskReducer } from './reducer/tasksReducer';
 
 export const TasksApp = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState('');
 
-  const addTodo = () => {
-    if(inputValue.length === 0) return;
-    const newTodo: Todo = {
-      id: Date.now(),
-      text: inputValue.trim(),
-      completed: false
-    }
-    // setTodos([...todos, newTodo]);
-    setTodos((prev) => [...prev, newTodo]);
+  const [state, dispatch] = useReducer(taskReducer, getTaskInitialState());
 
+  const addTodo = () => {
+    dispatch({type:'ADD_TODO', payload: inputValue})
+
+    setInputValue('');
   };
 
   const toggleTodo = (id: number) => {
-    const updatedTodos = todos.map((todo)=>{
-      if(todo.id === id){
-        return {...todo, completed: !todo.completed} 
-      }
-      return todo;
-    });
-    setTodos(updatedTodos);
+    dispatch({payload: id, type: 'TOGGLE_TODO'});
   };
 
   const deleteTodo = (id: number) => {
-    const updatedTodos = todos.filter((todo) => todo.id !== id);
-    setTodos(updatedTodos);
+    dispatch({payload: id, type: 'DELETE_TODO'});
 
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    console.log({key: e.key});
     if ( e.key === 'Enter'){
       addTodo();
     }
-
   };
-
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const totalCount = todos.length;
+  
+  const {todos, completed: completedCount, length: totalCount} = state;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4">
@@ -104,7 +84,7 @@ export const TasksApp = () => {
               </div>
               <div className="w-full bg-slate-200 rounded-full h-2">
                 <div
-                  className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-300 ease-out"
+                  className="bg-linear-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-300 ease-out"
                   style={{ width: `${(completedCount / totalCount) * 100}%` }}
                 />
               </div>

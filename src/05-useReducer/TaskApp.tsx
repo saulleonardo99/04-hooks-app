@@ -1,4 +1,4 @@
-import { useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import { Plus, Trash2, Check } from 'lucide-react';
 
@@ -13,28 +13,32 @@ export const TasksApp = () => {
 
   const [state, dispatch] = useReducer(taskReducer, getTaskInitialState());
 
+  useEffect(() => {
+    localStorage.setItem('task-state', JSON.stringify(state));
+    console.log({ state });
+  }, [state]);
   const addTodo = () => {
-    dispatch({type:'ADD_TODO', payload: inputValue})
+    dispatch({ type: 'ADD_TODO', payload: inputValue })
 
     setInputValue('');
   };
 
   const toggleTodo = (id: number) => {
-    dispatch({payload: id, type: 'TOGGLE_TODO'});
+    dispatch({ payload: id, type: 'TOGGLE_TODO' });
   };
 
   const deleteTodo = (id: number) => {
-    dispatch({payload: id, type: 'DELETE_TODO'});
+    dispatch({ payload: id, type: 'DELETE_TODO' });
 
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if ( e.key === 'Enter'){
+    if (e.key === 'Enter') {
       addTodo();
     }
   };
-  
-  const {todos, completed: completedCount, length: totalCount} = state;
+
+  const { todos, completed: completedCount, length: totalCount } = state;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 p-4">
@@ -114,11 +118,10 @@ export const TasksApp = () => {
                 {todos.map((todo) => (
                   <div
                     key={todo.id}
-                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${
-                      todo.completed
+                    className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-200 ${todo.completed
                         ? 'bg-slate-50 border-slate-200'
                         : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
-                    }`}
+                      }`}
                   >
                     <Checkbox
                       checked={todo.completed}
@@ -126,11 +129,10 @@ export const TasksApp = () => {
                       className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <span
-                      className={`flex-1 transition-all duration-200 ${
-                        todo.completed
+                      className={`flex-1 transition-all duration-200 ${todo.completed
                           ? 'text-slate-500 line-through'
                           : 'text-slate-800'
-                      }`}
+                        }`}
                     >
                       {todo.text}
                     </span>

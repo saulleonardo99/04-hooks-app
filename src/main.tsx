@@ -1,8 +1,10 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { InstagromApp } from './07-useOptimistic/InstagromApp'
+// import { InstagromApp } from './07-useOptimistic/InstagromApp'
 import { Toaster } from 'sonner'
+import { ClientInformation } from './08-use-suspense/ClientInformation'
+import { getUserAction } from './08-use-suspense/api/get-user.action'
 
 // import { MemoCounter } from './06-memos/MemoCounter'
 // import { MemoHook } from './06-memos/MemoHook'
@@ -28,6 +30,13 @@ createRoot(document.getElementById('root')!).render(
     {/* <ScrambleWords/> */}
     {/* <MemoHook/> */}
     {/* <MemoCounter/> */}
-    <InstagromApp/>
+    {/* <InstagromApp/> */}
+    <Suspense fallback={(
+      <div className="bg-gradient flex flex-col">
+        <h1 className="text-white text-2xl">Cargando ...</h1>
+      </div>
+    )}>
+      <ClientInformation getUser={getUserAction(1000)}/>
+    </Suspense>
   </StrictMode>,
 )
